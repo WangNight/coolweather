@@ -121,7 +121,7 @@ public class CoolWeatherDB
         }
         return list;
     }
-
+    //从数据库中获取countyCode等数据，配置list
     public List<County> loadCounties(int cityId)
     {
         List<County> list=new ArrayList<County>();
@@ -133,6 +133,7 @@ public class CoolWeatherDB
                 County county=new County();
                 county.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 county.setCountyName(cursor.getString(cursor.getColumnIndex("county_name")));
+                county.setCountyCode(cursor.getString(cursor.getColumnIndex("county_code")));
                 county.setCityId(cityId);
                 list.add(county);
             }
