@@ -1,12 +1,14 @@
 package com.coolweather.app.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.renderscript.Type;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +30,8 @@ public class WeatherActivity extends Activity
     private TextView temp1Text;
     private TextView temp2Text;
     private TextView currentDateText;
+    private Button switchCity;
+    private Button refreshWeather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,6 +46,33 @@ public class WeatherActivity extends Activity
         temp2Text=(TextView)findViewById(R.id.temp2);
         currentDateText=(TextView)findViewById(R.id.current_date);
         String countyCode=getIntent().getStringExtra("county_code");
+        switchCity=(Button)findViewById(R.id.switch_city);
+        switchCity.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent=new Intent(WeatherActivity.this,ChooseAreaActivity.class);
+                intent.putExtra("from_weather_activity",true);
+                startActivity(intent);
+                finish();
+            }
+        });
+        refreshWeather=(Button)findViewById(R.id.refresh_weather);
+        refreshWeather.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                publishText.setText("同步中...");
+                SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
+                String weatherCode=prefs.getString("weather_code","");
+                if(!TextUtils.isEmpty(weatherCode))
+                {
+                    queryWeatherInfo(weatherCode);
+                }
+            }
+        });
         if(!TextUtils.isEmpty(countyCode))
         {
             publishText.setText("同步中...");
@@ -52,7 +83,6 @@ public class WeatherActivity extends Activity
         else
         {
             showWeather();
-            Toast.makeText(WeatherActivity.this, "haha", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -127,4 +157,30 @@ public class WeatherActivity extends Activity
         weatherInfoLayout.setVisibility(View.VISIBLE);
         cityNameText.setVisibility(View.VISIBLE);
     }
+
+   /* @Override
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id.switch_city:
+                Intent intent=new Intent(this,ChooseAreaActivity.class);
+                intent.putExtra("from_weather_activity",true);
+                startActivity(intent);
+                finish();
+                break;
+
+            case R.id.refresh_weather:
+                publishText.setText("同步中...");
+                SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(this);
+                String weatherCode=prefs.getString("weather_code","");
+                if(!TextUtils.isEmpty(weatherCode))
+                {
+                    queryWeatherInfo(weatherCode);
+                }
+                break;
+            default:
+                break;
+        }
+    }*/
 }
